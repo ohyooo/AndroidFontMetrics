@@ -1,23 +1,15 @@
 package net.studymongolian.fontmetrics
 
 import android.graphics.Typeface
-import android.graphics.fonts.SystemFonts
-import android.os.Build
 import android.os.Bundle
-import android.text.TextPaint
-import android.text.util.Linkify
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import net.studymongolian.fontmetrics.databinding.ActivityMainBinding
-import java.io.File
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
