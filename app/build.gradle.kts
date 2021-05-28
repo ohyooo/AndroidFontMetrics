@@ -29,7 +29,7 @@ android {
 }
 
 dependencies {
-    implementation("androidx.activity:activity-ktx:1.3.0-alpha07")
-    implementation("androidx.appcompat:appcompat:1.3.0-rc01")
+    implementation("androidx.activity:activity-ktx:1.3.0-alpha08")
+    implementation("androidx.appcompat:appcompat:1.4.0-alpha01")
     implementation("androidx.recyclerview:recyclerview:1.2.0")
 }

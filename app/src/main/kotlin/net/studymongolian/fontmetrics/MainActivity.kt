@@ -4,7 +4,6 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -21,28 +20,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         setContentView(vdb.root)
 
-        findViewById<View>(R.id.updateButton).setOnClickListener(this)
+        vdb.viewWindow.onInvalidate {
+            updateTextViews()
+        }
 
-        updateTextViews()
-
-        initFontList()
+        // initFontList()
     }
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.updateButton -> {
-                vdb.viewWindow.setText(vdb.etTextString.text.toString())
-                val fontSize = try {
-                    Integer.valueOf(vdb.etFontSize.text.toString())
-                } catch (e: NumberFormatException) {
-                    FontMetricsView.DEFAULT_FONT_SIZE_PX
-                }
-
-                vdb.viewWindow.setTextSizeInPixels(fontSize)
-                updateTextViews()
-                hideKeyboard(currentFocus)
-            }
-
             R.id.cbTop -> vdb.viewWindow.setTopVisible(vdb.cbTop.isChecked)
             R.id.cbAscent -> vdb.viewWindow.setAscentVisible(vdb.cbAscent.isChecked)
             R.id.cbBaseline -> vdb.viewWindow.setBaselineVisible(vdb.cbBaseline.isChecked)
@@ -59,16 +45,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         vdb.tvBaseline.text = 0F.toString()
         vdb.tvDescent.text = "${vdb.viewWindow.fontMetrics.descent}"
         vdb.tvBottom.text = "${vdb.viewWindow.fontMetrics.bottom}"
-        vdb.tvBounds.text = "w = ${vdb.viewWindow.textBounds.width()} h = ${vdb.viewWindow.textBounds.height()}"
+        vdb.tvBounds.text = "${vdb.viewWindow.textBounds.width()}, ${vdb.viewWindow.textBounds.height()}"
         vdb.tvWidth.text = "${vdb.viewWindow.measuredTextWidth}"
         vdb.tvLeading.text = "${vdb.viewWindow.fontMetrics.leading}"
-    }
-
-    private fun hideKeyboard(view: View?) {
-        if (view != null) {
-            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
-        }
     }
 
     private fun initFontList() {
