@@ -5,12 +5,12 @@ plugins {
 }
 
 android {
-    compileSdk = 30
-    buildToolsVersion = "30.0.3"
+    compileSdk = 31
+    buildToolsVersion = "31.0.0"
     defaultConfig {
         applicationId = "net.studymongolian.fontmetrics"
         minSdk = 21
-        targetSdk = 30
+        targetSdk = 31
         versionCode = 1
         versionName = "1.0"
     }
@@ -29,7 +29,7 @@ android {
 }
 
 dependencies {
-    implementation("androidx.activity:activity-ktx:1.3.0-alpha08")
-    implementation("androidx.appcompat:appcompat:1.4.0-alpha01")
-    implementation("androidx.recyclerview:recyclerview:1.2.0")
+    implementation("androidx.activity:activity-ktx:1.3.1")
+    implementation("androidx.appcompat:appcompat:1.3.1")
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
 }
