@@ -2,15 +2,19 @@ package net.studymongolian.fontmetrics
 
 import android.graphics.Typeface
 import android.os.Bundle
-import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import net.studymongolian.fontmetrics.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity(), View.OnClickListener {
+class MainActivity : AppCompatActivity() {
 
     private val vm by viewModels<MainViewModel>()
     private val vdb by lazy(LazyThreadSafetyMode.NONE) { ActivityMainBinding.inflate(layoutInflater).apply { vm = this@MainActivity.vm } }
@@ -19,6 +23,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
 
         setContentView(vdb.root)
+        applyWindowInsets()
+        setupMetricToggles()
+        updateTextViews()
 
         vdb.viewWindow.onInvalidate {
             updateTextViews()
@@ -27,19 +34,41 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         // initFontList()
     }
 
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.cbTop -> vdb.viewWindow.setTopVisible(vdb.cbTop.isChecked)
-            R.id.cbAscent -> vdb.viewWindow.setAscentVisible(vdb.cbAscent.isChecked)
-            R.id.cbBaseline -> vdb.viewWindow.setBaselineVisible(vdb.cbBaseline.isChecked)
-            R.id.cbDescent -> vdb.viewWindow.setDescentVisible(vdb.cbDescent.isChecked)
-            R.id.cbBottom -> vdb.viewWindow.setBottomVisible(vdb.cbBottom.isChecked)
-            R.id.cbBounds -> vdb.viewWindow.setBoundsVisible(vdb.cbBounds.isChecked)
-            R.id.cbWidth -> vdb.viewWindow.setWidthVisible(vdb.cbWidth.isChecked)
+    private fun applyWindowInsets() {
+        val initialPaddingLeft = vdb.activityMain.paddingLeft
+        val initialPaddingTop = vdb.activityMain.paddingTop
+        val initialPaddingRight = vdb.activityMain.paddingRight
+        val initialPaddingBottom = vdb.activityMain.paddingBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(vdb.activityMain) { view, windowInsets ->
+            val insets: Insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.updatePadding(
+                left = initialPaddingLeft + insets.left,
+                top = initialPaddingTop + insets.top,
+                right = initialPaddingRight + insets.right,
+                bottom = initialPaddingBottom + insets.bottom
+            )
+            windowInsets
         }
+        ViewCompat.requestApplyInsets(vdb.activityMain)
     }
 
-    fun updateTextViews() {
+    private fun setupMetricToggles() {
+        bindMetricToggle(vdb.cbTop, vdb.viewWindow::setTopVisible)
+        bindMetricToggle(vdb.cbAscent, vdb.viewWindow::setAscentVisible)
+        bindMetricToggle(vdb.cbBaseline, vdb.viewWindow::setBaselineVisible)
+        bindMetricToggle(vdb.cbDescent, vdb.viewWindow::setDescentVisible)
+        bindMetricToggle(vdb.cbBottom, vdb.viewWindow::setBottomVisible)
+        bindMetricToggle(vdb.cbBounds, vdb.viewWindow::setBoundsVisible)
+        bindMetricToggle(vdb.cbWidth, vdb.viewWindow::setWidthVisible)
+    }
+
+    private fun bindMetricToggle(checkBox: CompoundButton, setter: (Boolean) -> Unit) {
+        setter(checkBox.isChecked)
+        checkBox.setOnCheckedChangeListener { _, isChecked -> setter(isChecked) }
+    }
+
+    private fun updateTextViews() {
         vdb.tvTop.text = "${vdb.viewWindow.fontMetrics.top}"
         vdb.tvAscent.text = "${vdb.viewWindow.fontMetrics.ascent}"
         vdb.tvBaseline.text = 0F.toString()

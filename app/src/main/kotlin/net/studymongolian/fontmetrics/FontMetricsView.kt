@@ -5,44 +5,44 @@ import android.graphics.*
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
-import androidx.databinding.BindingAdapter
+import androidx.core.content.ContextCompat
 
 class FontMetricsView : View {
     private var mText = "My text line"
     private var mTextSize = DEFAULT_FONT_SIZE_PX
 
     private val mAscentPaint = Paint().apply {
-        color = resources.getColor(R.color.ascent)
+        color = ContextCompat.getColor(context, R.color.ascent)
         strokeWidth = STROKE_WIDTH
     }
 
     private val mTopPaint = Paint().apply {
-        color = resources.getColor(R.color.top)
+        color = ContextCompat.getColor(context, R.color.top)
         strokeWidth = STROKE_WIDTH
     }
 
     private val mBaselinePaint = Paint().apply {
-        color = resources.getColor(R.color.baseline)
+        color = ContextCompat.getColor(context, R.color.baseline)
         strokeWidth = STROKE_WIDTH
     }
 
     private val mDescentPaint = Paint().apply {
-        color = resources.getColor(R.color.descent)
+        color = ContextCompat.getColor(context, R.color.descent)
         strokeWidth = STROKE_WIDTH
     }
 
     private val mBottomPaint = Paint().apply {
-        color = resources.getColor(R.color.bottom)
+        color = ContextCompat.getColor(context, R.color.bottom)
         strokeWidth = STROKE_WIDTH
     }
 
     private val mMeasuredWidthPaint = Paint().apply {
-        color = resources.getColor(R.color.measured_width)
+        color = ContextCompat.getColor(context, R.color.measured_width)
         strokeWidth = STROKE_WIDTH
     }
 
     private val mTextBoundsPaint = Paint().apply {
-        color = resources.getColor(R.color.text_bounds)
+        color = ContextCompat.getColor(context, R.color.text_bounds)
         strokeWidth = STROKE_WIDTH
         style = Paint.Style.STROKE
     }
@@ -93,8 +93,8 @@ class FontMetricsView : View {
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
 
     // setters
-    fun setText(text: String) {
-        mText = text
+    fun setText(text: String?) {
+        mText = text.orEmpty()
         invalidate()
         requestLayout()
     }
@@ -104,6 +104,10 @@ class FontMetricsView : View {
         mTextPaint.textSize = mTextSize.toFloat()
         invalidate()
         requestLayout()
+    }
+
+    fun setSize(size: String?) {
+        size?.toIntOrNull()?.let(::setTextSizeInPixels)
     }
 
     fun setTopVisible(isVisible: Boolean) {
@@ -158,70 +162,69 @@ class FontMetricsView : View {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        // center the text baseline vertically
-        val verticalAdjustment = this.height / 2
-        canvas.translate(0F, verticalAdjustment.toFloat())
+        val fontMetrics = mTextPaint.fontMetrics
+        val contentTop = paddingTop.toFloat()
+        val contentBottom = (height - paddingBottom).toFloat()
+        val contentHeight = contentBottom - contentTop
+        val baseline = contentTop + (contentHeight - (fontMetrics.bottom - fontMetrics.top)) / 2f - fontMetrics.top
+
         var startX = paddingLeft.toFloat()
-        var startY = 0F
-        var stopX = this.measuredWidth.toFloat()
-        var stopY = 0F
+        var startY = baseline
+        var stopX = (width - paddingRight).toFloat()
+        var stopY = baseline
 
         // draw text
         canvas.drawText(mText, startX, startY, mTextPaint) // x=0, y=0
 
         // draw lines
-        startX = 0f
+        startX = paddingLeft.toFloat()
         if (mIsTopVisible) {
-            startY = mTextPaint.fontMetrics.top
+            startY = baseline + fontMetrics.top
             stopY = startY
             canvas.drawLine(startX, startY, stopX, stopY, mTopPaint)
         }
         if (mIsAscentVisible) {
-            startY = mTextPaint.fontMetrics.ascent
+            startY = baseline + fontMetrics.ascent
             stopY = startY
-            //mLinePaint.setColor(Color.GREEN);
             canvas.drawLine(startX, startY, stopX, stopY, mAscentPaint)
         }
         if (mIsBaselineVisible) {
-            startY = 0f
+            startY = baseline
             stopY = startY
             canvas.drawLine(startX, startY, stopX, stopY, mBaselinePaint)
         }
         if (mIsDescentVisible) {
-            startY = mTextPaint.fontMetrics.descent
+            startY = baseline + fontMetrics.descent
             stopY = startY
-            //mLinePaint.setColor(Color.BLUE);
             canvas.drawLine(startX, startY, stopX, stopY, mDescentPaint)
         }
         if (mIsBottomVisible) {
-            startY = mTextPaint.fontMetrics.bottom
+            startY = baseline + fontMetrics.bottom
             stopY = startY
-            // mLinePaint.setColor(ORANGE);
-            mLinePaint.color = Color.RED
-            canvas.drawLine(startX, startY, stopX, stopY, mBaselinePaint)
+            canvas.drawLine(startX, startY, stopX, stopY, mBottomPaint)
         }
         if (mIsBoundsVisible) {
             mTextPaint.getTextBounds(mText, 0, mText.length, mBounds)
             val dx = paddingLeft.toFloat()
-            canvas.drawRect(mBounds.left + dx, mBounds.top.toFloat(), mBounds.right + dx, mBounds.bottom.toFloat(), mTextBoundsPaint)
+            canvas.drawRect(
+                mBounds.left + dx,
+                baseline + mBounds.top,
+                mBounds.right + dx,
+                baseline + mBounds.bottom,
+                mTextBoundsPaint
+            )
         }
         if (mIsWidthVisible) {
-
-
-            // get measured width
             val width = mTextPaint.measureText(mText)
 
-            // get bounding width so that we can compare them
             mTextPaint.getTextBounds(mText, 0, mText.length, mBounds)
 
-            // draw vertical line just before the left bounds
             startX = paddingLeft + mBounds.left - (width - mBounds.width()) / 2
             stopX = startX
-            startY = -verticalAdjustment.toFloat()
-            stopY = startY + this.height
+            startY = contentTop
+            stopY = contentBottom
             canvas.drawLine(startX, startY, stopX, stopY, mMeasuredWidthPaint)
 
-            // draw vertical line just after the right bounds
             startX = startX + width
             stopX = startX
             canvas.drawLine(startX, startY, stopX, stopY, mMeasuredWidthPaint)
@@ -242,7 +245,7 @@ class FontMetricsView : View {
         val heightRequirement = MeasureSpec.getSize(heightMeasureSpec)
         if (heightMode == MeasureSpec.EXACTLY) {
             height = heightRequirement
-        } else if (heightMode == MeasureSpec.AT_MOST && width > heightRequirement) {
+        } else if (heightMode == MeasureSpec.AT_MOST && height > heightRequirement) {
             height = heightRequirement
         }
         setMeasuredDimension(width, height)
@@ -255,16 +258,4 @@ class FontMetricsView : View {
         //private static final int ORANGE = Color.parseColor("#ff8a00");
         private const val STROKE_WIDTH = 5.0F
     }
-}
-
-@BindingAdapter("size")
-fun setSize(v: FontMetricsView, size: String) {
-    size.toIntOrNull()?.let {
-        v.setTextSizeInPixels(it)
-    }
-}
-
-@BindingAdapter("text")
-fun setText(v: FontMetricsView, text: String) {
-    v.setText(text)
 }

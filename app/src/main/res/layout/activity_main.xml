@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="UsingOnClickInXml,HardcodedText,Autofill,LabelFor,TextFields">
+    tools:ignore="HardcodedText,Autofill,LabelFor,TextFields">
 
     <data>
 
@@ -16,10 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingHorizontal="@dimen/activity_horizontal_margin"
+        android:paddingVertical="@dimen/activity_vertical_margin"
         tools:context=".MainActivity">
 
         <net.studymongolian.fontmetrics.FontMetricsView
@@ -28,12 +26,13 @@
             android:layout_height="150dp"
             android:background="@android:color/white"
             android:padding="20dp"
-            app:size="@{vm.textSize}"
-            app:text="@{vm.text}" />
+            app:size="@{vm.textSize.get()}"
+            app:text="@{vm.text.get()}" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -81,7 +80,6 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checked="true"
-                            android:onClick="onClick"
                             android:text="Top"
                             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -106,7 +104,6 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checked="true"
-                            android:onClick="onClick"
                             android:text="Ascent"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:theme="@style/Theme.AppCompat.CheckBoxAscent" />
@@ -132,7 +129,6 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checked="true"
-                            android:onClick="onClick"
                             android:text="Baseline"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:theme="@style/Theme.AppCompat.CheckboxBaseline" />
@@ -159,7 +155,6 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checked="true"
-                            android:onClick="onClick"
                             android:text="Descent"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:theme="@style/Theme.AppCompat.CheckboxDescent" />
@@ -185,7 +180,6 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checked="true"
-                            android:onClick="onClick"
                             android:text="Bottom"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:theme="@style/Theme.AppCompat.CheckboxBottom" />
@@ -211,7 +205,6 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checked="true"
-                            android:onClick="onClick"
                             android:text="Measured width"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:theme="@style/Theme.AppCompat.MeasuerdWidth" />
@@ -237,7 +230,6 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checked="true"
-                            android:onClick="onClick"
                             android:text="Text bounds"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:theme="@style/Theme.AppCompat.TextBounds" />

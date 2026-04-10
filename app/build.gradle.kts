@@ -1,35 +1,39 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    kotlin("kapt")
+    alias(libs.plugins.agp)
 }
 
 android {
-    compileSdk = 31
-    buildToolsVersion = "31.0.0"
+    namespace = "net.studymongolian.fontmetrics"
+    compileSdk {
+        version = release(libs.versions.compile.sdk.get().toInt()) {
+            minorApiLevel = libs.versions.compile.minor.get().toInt()
+        }
+    }
+
     defaultConfig {
         applicationId = "net.studymongolian.fontmetrics"
-        minSdk = 21
-        targetSdk = 31
+        minSdk = libs.versions.min.sdk.get().toInt()
+        targetSdk = libs.versions.target.sdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+
     buildFeatures {
         viewBinding = true
         dataBinding = true
-        mlModelBinding = true
     }
 }
 
 dependencies {
-    implementation("androidx.activity:activity-ktx:1.3.1")
-    implementation("androidx.appcompat:appcompat:1.3.1")
-    implementation("androidx.recyclerview:recyclerview:1.2.1")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.recyclerview)
 }
