@@ -30,25 +30,14 @@ jobs:
           cache: 'gradle'
 
       - name: Build APK
-        run: chmod +x gradlew && ./gradlew :android:assembleRelease
+        run: chmod +x gradlew && ./gradlew :app:assembleRelease
 
       - name: Upload to artifact
         uses: actions/upload-artifact@v7
         continue-on-error: true
         with:
           name: apk
-          path: android/build/outputs/apk/release/*.apk
-
-      # - name: Upload to release
-      #   uses: svenstaro/upload-release-action@master
-      #   if: github.event_name == 'release'
-      #   with:
-      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #     file: android/build/outputs/apk/release/*.apk
-      #     asset_name: JPSyllabary
-      #     tag: ${{ github.ref }}_${{ steps.time.outputs.time }}
-      #     overwrite: true
-      #     file_glob: true
+          path: app/build/outputs/apk/release/*.apk
 
       - name: Remove old Releases
         uses: dev-drprasad/delete-older-releases@master
